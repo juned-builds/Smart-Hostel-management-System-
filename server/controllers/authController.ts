@@ -3,9 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 import { Student } from '../models/Student.js';
-import { AuthRequest } from '../middleware/auth.js';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'gtu_smart_hostel_secret_key_2026_be_sem5';
+import { AuthRequest, getJwtSecret } from '../middleware/auth.js';
 
 export async function login(req: Request, res: Response) {
   try {
@@ -39,7 +37,8 @@ export async function login(req: Request, res: Response) {
       studentId: studentProfile?._id?.toString(),
     };
 
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+    const jwtSecret = getJwtSecret();
+    const token = jwt.sign(payload, jwtSecret, { expiresIn: '7d' });
 
     return res.json({
       success: true,

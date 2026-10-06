@@ -7,6 +7,7 @@ import { createServer as createViteServer } from 'vite';
 
 import { connectDB } from './server/config/db.js';
 import { seedDatabase } from './server/seed/seedData.js';
+import { getJwtSecret } from './server/middleware/auth.js';
 
 import authRoutes from './server/routes/authRoutes.js';
 import studentRoutes from './server/routes/studentRoutes.js';
@@ -26,6 +27,14 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 const isProduction = process.env.NODE_ENV === 'production';
 
 async function bootstrap() {
+  // Validate required JWT secret during server startup
+  try {
+    getJwtSecret();
+  } catch (err: any) {
+    console.error(`[HostelApp] ${err.message}`);
+    process.exit(1);
+  }
+
   const app = express();
 
   // Core middlewares

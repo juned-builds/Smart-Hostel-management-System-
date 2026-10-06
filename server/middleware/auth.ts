@@ -1,7 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'gtu_smart_hostel_secret_key_2026_be_sem5';
+export function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET?.trim();
+  if (!secret) {
+    throw new Error('FATAL CONFIGURATION ERROR: JWT_SECRET environment variable is missing or empty.');
+  }
+  return secret;
+}
 
 export interface AuthUserPayload {
   userId: string;
@@ -22,7 +28,8 @@ export function authenticate(req: AuthRequest, res: Response, next: NextFunction
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as AuthUserPayload;
+    const secret = getJwtSecret();
+    const decoded = jwt.verify(token, secret) as AuthUserPayload;
     req.user = decoded;
     next();
   } catch (err) {
