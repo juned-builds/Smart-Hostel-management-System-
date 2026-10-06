@@ -1,0 +1,6 @@
+{
+  "name": "Smart Hostel Management System",
+  "description": "Comprehensive GTU college hostel portal featuring student profiles, room allocations, complaint tracking, leave approvals, notices, and fee status management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
