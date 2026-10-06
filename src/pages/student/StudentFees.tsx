@@ -199,7 +199,7 @@ export const StudentFees: React.FC = () => {
         maxWidth="max-w-xl"
       >
         {viewingReceipt && (
-          <div className="space-y-4 text-xs font-sans">
+          <div id="printable-fee-receipt" className="space-y-4 text-xs font-sans">
             {/* Header branding */}
             <div className="text-center pb-3 border-b border-slate-200">
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900">
@@ -262,7 +262,7 @@ export const StudentFees: React.FC = () => {
               This is a computer-generated university e-receipt for GTU BE 5th Sem WAD/ADBMS submission.
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex justify-end space-x-2">
+            <div className="pt-3 border-t border-slate-100 flex justify-end space-x-2 no-print">
               <button
                 type="button"
                 onClick={() => setViewingReceipt(null)}

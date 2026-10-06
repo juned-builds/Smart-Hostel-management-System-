@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import mongoose from 'mongoose';
 import { createServer as createViteServer } from 'vite';
 
 import { connectDB } from './server/config/db.js';
@@ -31,21 +32,37 @@ async function bootstrap() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Connect to Database and Seed
+  // 1. Wait for successful MongoDB connection before starting API operations
   try {
     const dbUri = await connectDB();
-    console.log(`[HostelApp] Database connected successfully.`);
+    console.log(`[HostelApp] Database connected successfully to ${dbUri}`);
     await seedDatabase(false);
   } catch (error) {
-    console.error(`[HostelApp] Database connection error:`, error);
+    console.error(`[HostelApp] Fatal: Database connection error:`, error);
+    process.exit(1);
   }
 
-  // Health check endpoint
+  // Health check endpoint with database connection status
   app.get('/api/health', (req: Request, res: Response) => {
-    res.json({
-      status: 'healthy',
+    const dbState = mongoose.connection.readyState;
+    const dbStates: Record<number, string> = {
+      0: 'disconnected',
+      1: 'connected',
+      2: 'connecting',
+      3: 'disconnecting',
+    };
+    const isDbConnected = dbState === 1;
+
+    res.status(isDbConnected ? 200 : 503).json({
+      status: isDbConnected ? 'healthy' : 'database_unavailable',
       app: 'Smart Hostel Management System',
       university: 'Gujarat Technological University (GTU)',
+      database: {
+        status: dbStates[dbState] || 'unknown',
+        name: mongoose.connection.name || 'smart_hostel',
+        host: mongoose.connection.host || '127.0.0.1',
+        port: mongoose.connection.port || 27017,
+      },
       timestamp: new Date().toISOString(),
     });
   });
@@ -88,8 +105,8 @@ async function bootstrap() {
         middlewareMode: true,
         host: '0.0.0.0',
         port: PORT,
-        hmr: process.env.DISABLE_HMR !== 'true',
-        watch: process.env.DISABLE_HMR === 'true' ? null : {},
+        hmr: false,
+        watch: null,
       },
       appType: 'spa',
     });

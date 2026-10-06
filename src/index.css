@@ -1,1 +1,80 @@
 @import "tailwindcss";
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  /* Reset document for clean printing */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Hide all application UI (sidebar, header, dashboard, background) */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Unhide only the receipt content and its children */
+  #printable-fee-receipt,
+  #printable-fee-receipt * {
+    visibility: visible;
+  }
+
+  /* Reset modal overlays and wrappers so they don't clip or offset during print */
+  .fixed,
+  .fixed inset-0,
+  div[class*="fixed"] {
+    position: static !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    transform: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Format receipt cleanly for A4 printing */
+  #printable-fee-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    background: #ffffff !important;
+    border: 1px solid #94a3b8 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    display: block !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Ensure receipt borders and tables render crisply in print */
+  #printable-fee-receipt table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  #printable-fee-receipt th,
+  #printable-fee-receipt td {
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  /* Hide print buttons, close buttons and interactive controls */
+  .no-print,
+  #printable-fee-receipt .no-print,
+  button {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
